@@ -1,5 +1,7 @@
 library swipe_cards;
 
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:swipe_cards/draggable_card.dart';
@@ -134,6 +136,29 @@ class _SwipeCardsState extends State<SwipeCards> {
     });
   }
 
+  void _onWillSlide(SlideDirection? direction) {
+    SlideRegion? region;
+
+    switch (direction) {
+      case SlideDirection.left:
+        region = SlideRegion.inNopeRegion;
+        break;
+      case SlideDirection.right:
+        region = SlideRegion.inLikeRegion;
+        break;
+      case SlideDirection.up:
+        region = SlideRegion.inSuperLikeRegion;
+        break;
+      case null:
+        break;
+    }
+
+    SwipeItem? currentMatch = widget.matchEngine.currentItem;
+    if (currentMatch != null && currentMatch.onSlideUpdate != null) {
+      currentMatch.onWillSlide!(region);
+    }
+  }
+
   void _onSlideOutComplete(SlideDirection? direction) {
     SwipeItem? currentMatch = widget.matchEngine.currentItem;
     switch (direction) {
@@ -199,6 +224,7 @@ class _SwipeCardsState extends State<SwipeCards> {
             onSlideUpdate: _onSlideUpdate,
             onSlideRegionUpdate: _onSlideRegion,
             onSlideOutComplete: _onSlideOutComplete,
+            onWillSlide: _onWillSlide,
             upSwipeAllowed: widget.upSwipeAllowed,
             leftSwipeAllowed: widget.leftSwipeAllowed,
             rightSwipeAllowed: widget.rightSwipeAllowed,
@@ -255,6 +281,7 @@ class SwipeItem extends ChangeNotifier {
   final Function? superlikeAction;
   final Function? nopeAction;
   final Future Function(SlideRegion? slideRegion)? onSlideUpdate;
+  final void Function(SlideRegion? slideRegion)? onWillSlide;
   Decision decision = Decision.undecided;
 
   SwipeItem({
@@ -263,6 +290,7 @@ class SwipeItem extends ChangeNotifier {
     this.superlikeAction,
     this.nopeAction,
     this.onSlideUpdate,
+    this.onWillSlide,
   });
 
   void slideUpdateAction(SlideRegion? slideRegion) async {

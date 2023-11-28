@@ -1,6 +1,6 @@
 name: example
 description: A Flutter project for swipe_cards example.
-publish_to: 'none'
+publish_to: "none"
 version: 2.0.0+1
 
 environment:

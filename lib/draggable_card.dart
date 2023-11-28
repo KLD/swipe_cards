@@ -14,9 +14,10 @@ class DraggableCard extends StatefulWidget {
   final Widget? superLikeTag;
   final bool isDraggable;
   final SlideDirection? slideTo;
-  final Function(double distance)? onSlideUpdate;
-  final Function(SlideRegion? slideRegion)? onSlideRegionUpdate;
-  final Function(SlideDirection? direction)? onSlideOutComplete;
+  final void Function(double distance)? onSlideUpdate;
+  final void Function(SlideRegion? slideRegion)? onSlideRegionUpdate;
+  final void Function(SlideDirection? direction)? onSlideOutComplete;
+  final void Function(SlideDirection? direction)? onWillSlide;
   final bool upSwipeAllowed;
   final bool leftSwipeAllowed;
   final bool rightSwipeAllowed;
@@ -31,6 +32,7 @@ class DraggableCard extends StatefulWidget {
       this.isDraggable = true,
       this.onSlideUpdate,
       this.onSlideOutComplete,
+      this.onWillSlide,
       this.slideTo,
       this.onSlideRegionUpdate,
       this.upSwipeAllowed = false,
@@ -61,6 +63,8 @@ class _DraggableCardState extends State<DraggableCard>
   Rect? anchorBounds;
 
   bool isAnchorInitialized = false;
+
+  AnimationStatus previousStatus = AnimationStatus.completed;
 
   @override
   void initState() {
@@ -112,6 +116,11 @@ class _DraggableCardState extends State<DraggableCard>
         });
       })
       ..addStatusListener((AnimationStatus status) {
+        if (status == AnimationStatus.forward &&
+            previousStatus != AnimationStatus.forward) {
+          widget.onWillSlide?.call(slideOutDirection);
+        }
+
         if (status == AnimationStatus.completed) {
           setState(() {
             dragStart = null;
@@ -123,6 +132,7 @@ class _DraggableCardState extends State<DraggableCard>
             }
           });
         }
+        previousStatus = status;
       });
   }
 
@@ -245,9 +255,8 @@ class _DraggableCardState extends State<DraggableCard>
         if (widget.leftSwipeAllowed) {
           slideOutTween = Tween(
               begin: cardOffset, end: dragVector * (2 * context.size!.width));
-          slideOutAnimation.forward(from: 0.0);
-
           slideOutDirection = SlideDirection.left;
+          slideOutAnimation.forward(from: 0.0);
         } else {
           slideBackStart = cardOffset;
           slideBackAnimation.forward(from: 0.0);
@@ -256,9 +265,8 @@ class _DraggableCardState extends State<DraggableCard>
         if (widget.rightSwipeAllowed) {
           slideOutTween = Tween(
               begin: cardOffset, end: dragVector * (2 * context.size!.width));
-          slideOutAnimation.forward(from: 0.0);
-
           slideOutDirection = SlideDirection.right;
+          slideOutAnimation.forward(from: 0.0);
         } else {
           slideBackStart = cardOffset;
           slideBackAnimation.forward(from: 0.0);
@@ -267,9 +275,8 @@ class _DraggableCardState extends State<DraggableCard>
         if (widget.upSwipeAllowed) {
           slideOutTween = Tween(
               begin: cardOffset, end: dragVector * (2 * context.size!.height));
-          slideOutAnimation.forward(from: 0.0);
-
           slideOutDirection = SlideDirection.up;
+          slideOutAnimation.forward(from: 0.0);
         } else {
           slideBackStart = cardOffset;
           slideBackAnimation.forward(from: 0.0);

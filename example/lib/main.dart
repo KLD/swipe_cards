@@ -60,28 +60,32 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     for (int i = 0; i < _names.length; i++) {
       _swipeItems.add(SwipeItem(
-          content: Content(text: _names[i], color: _colors[i]),
-          likeAction: () {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text("Liked ${_names[i]}"),
-              duration: Duration(milliseconds: 500),
-            ));
-          },
-          nopeAction: () {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text("Nope ${_names[i]}"),
-              duration: Duration(milliseconds: 500),
-            ));
-          },
-          superlikeAction: () {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text("Superliked ${_names[i]}"),
-              duration: Duration(milliseconds: 500),
-            ));
-          },
-          onSlideUpdate: (SlideRegion? region) async {
-            print("Region $region");
-          }));
+        content: Content(text: _names[i], color: _colors[i]),
+        likeAction: () {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Liked ${_names[i]}"),
+            duration: Duration(milliseconds: 500),
+          ));
+        },
+        nopeAction: () {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Nope ${_names[i]}"),
+            duration: Duration(milliseconds: 500),
+          ));
+        },
+        superlikeAction: () {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Superliked ${_names[i]}"),
+            duration: Duration(milliseconds: 500),
+          ));
+        },
+        onSlideUpdate: (SlideRegion? region) async {
+          print("Region $region");
+        },
+        onWillSlide: (slideRegion) {
+          print("Will $slideRegion");
+        },
+      ));
     }
 
     _matchEngine = MatchEngine(swipeItems: _swipeItems);
@@ -127,25 +131,22 @@ class _MyHomePageState extends State<MyHomePage> {
               likeTag: Container(
                 margin: const EdgeInsets.all(15.0),
                 padding: const EdgeInsets.all(3.0),
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.green)
-                ),
+                decoration:
+                    BoxDecoration(border: Border.all(color: Colors.green)),
                 child: Text('Like'),
               ),
               nopeTag: Container(
                 margin: const EdgeInsets.all(15.0),
                 padding: const EdgeInsets.all(3.0),
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.red)
-                ),
+                decoration:
+                    BoxDecoration(border: Border.all(color: Colors.red)),
                 child: Text('Nope'),
               ),
               superLikeTag: Container(
                 margin: const EdgeInsets.all(15.0),
                 padding: const EdgeInsets.all(3.0),
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.orange)
-                ),
+                decoration:
+                    BoxDecoration(border: Border.all(color: Colors.orange)),
                 child: Text('Super Like'),
               ),
             ),
