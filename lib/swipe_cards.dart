@@ -154,7 +154,7 @@ class _SwipeCardsState extends State<SwipeCards> {
     }
 
     SwipeItem? currentMatch = widget.matchEngine.currentItem;
-    if (currentMatch != null && currentMatch.onSlideUpdate != null) {
+    if (currentMatch != null && currentMatch.onWillSlide != null) {
       currentMatch.onWillSlide!(region);
     }
   }
